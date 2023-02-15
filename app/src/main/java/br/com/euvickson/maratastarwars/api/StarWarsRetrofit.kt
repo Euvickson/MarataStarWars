@@ -2,6 +2,7 @@ package br.com.euvickson.maratastarwars.api
 
 import android.util.Log
 import br.com.euvickson.maratastarwars.api.model.StarWarsApiResults
+import br.com.euvickson.maratastarwars.model.StarWarsPerson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,21 +22,30 @@ object StarWarsRetrofit {
         service = retrofit.create(StarWarsService::class.java)
     }
 
-    fun listStarWarsPerson () {
-        val call = service.listPerson()
+    fun listStarWarsPerson (): List<StarWarsPerson> {
+
+        val call = service.listFirstPage()
+        val listFirstPage = mutableListOf<StarWarsPerson>()
 
         call.enqueue(object : Callback<StarWarsApiResults> {
             override fun onResponse(
                 call: Call<StarWarsApiResults>,
                 response: Response<StarWarsApiResults>
             ) {
-                Log.i("STAR_WARS_API", "Star Wars People Loaded")
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    body?.results?.let {
+                        it.forEach {person ->
+                        listFirstPage.add(person)
+                        }
+                    }
+                }
             }
 
             override fun onFailure(call: Call<StarWarsApiResults>, t: Throwable) {
                 Log.e("STAR_WARS_API", "Error during API request", t)
             }
-
         })
+        return listFirstPage
     }
 }
