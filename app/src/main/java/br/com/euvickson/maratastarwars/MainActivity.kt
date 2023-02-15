@@ -4,22 +4,24 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import br.com.euvickson.maratastarwars.api.StarWarsRetrofit
 import br.com.euvickson.maratastarwars.ui.theme.MarataStarWarsTheme
@@ -100,6 +102,8 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(1) {
+                        var isExpanded by remember { mutableStateOf(false) }
+                        var isFavorite by remember { mutableStateOf(false) }
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
@@ -110,7 +114,9 @@ class MainActivity : ComponentActivity() {
                                     ),
                                     shape = RoundedCornerShape(15.dp)
                                 )
-                                .width(300.dp),
+                                .width(300.dp)
+                                .padding(vertical = 8.dp)
+                                .animateContentSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(text = "Name: ")
@@ -118,18 +124,27 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Mass: ")
                             Text(text = "Hair Color: ")
                             Text(text = "Skin Color: ")
-                            Text(text = "Eye Color: ")
-                            Text(text = "Birth Year: ")
-                            Text(text = "Gender: ")
-                            Text(text = "Homeworld: ")
-                            Text(text = "Species: ")
-                            Row(modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                                var buttonState by remember { mutableStateOf(false) }
-                                Button(onClick = { buttonState = !buttonState}) {
-                                    Text(text = if (buttonState) "Ver mais" else "Ver menos")
+                            AnimatedVisibility(visible = isExpanded) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .fillParentMaxWidth()
+                                        .animateContentSize(),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text(text = "Eye Color: ")
+                                    Text(text = "Birth Year: ")
+                                    Text(text = "Gender: ")
+                                    Text(text = "Homeworld: ")
+                                    Text(text = "Species: ")
                                 }
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(imageVector = Icons.Default.Star, contentDescription = "Favoritar")
+                            }
+
+                            Row(modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+                                Button(onClick = { isExpanded = !isExpanded}) {
+                                    Text(text = if (isExpanded) "Ver menos" else "Ver mais")
+                                }
+
+                                IconButton(onClick = { isFavorite = !isFavorite }) {
+                                    Icon(imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, contentDescription = "Favoritar")
                                 }
                             }
                         }
