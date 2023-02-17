@@ -2,33 +2,29 @@ package br.com.euvickson.maratastarwars
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
-import br.com.euvickson.maratastarwars.api.StarWarsRetrofit
+import br.com.euvickson.maratastarwars.model.StarWarsPerson
+import br.com.euvickson.maratastarwars.ui.elements.ListItem
 import br.com.euvickson.maratastarwars.ui.theme.MarataStarWarsTheme
+import br.com.euvickson.maratastarwars.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    val mainViewModel by viewModels<MainViewModel>()
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +36,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val starWarsTestApi = StarWarsRetrofit.listStarWarsPerson()
+                    val lista = mainViewModel.starWarsPersonListResponse
+                    mainViewModel.getPeopleList()
                     val drawerState = rememberDrawerState(DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
 
-                    TelaPrincipal(drawerState, scope)
+
+                    TelaPrincipal(drawerState, scope, lista)
                 }
             }
         }
@@ -54,7 +52,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     private fun TelaPrincipal(
         drawerState: DrawerState,
-        scope: CoroutineScope
+        scope: CoroutineScope,
+        lista: List<StarWarsPerson>
     ) {
         ModalNavigationDrawer(
             drawerContent = {
@@ -65,7 +64,7 @@ class MainActivity : ComponentActivity() {
             },
             drawerState = drawerState
         ) {
-            TopAppBar(scope, drawerState)
+            TopAppBar(scope, drawerState, lista)
         }
     }
 
@@ -73,7 +72,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     private fun TopAppBar(
         scope: CoroutineScope,
-        drawerState: DrawerState
+        drawerState: DrawerState,
+        lista: List<StarWarsPerson>
     ) {
         Scaffold(topBar = {
             CenterAlignedTopAppBar(
@@ -94,60 +94,14 @@ class MainActivity : ComponentActivity() {
             )
         },
             content = { innerPadding ->
-                //The main screen itens will be placed right here
                 LazyColumn(
                     contentPadding = innerPadding,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(1) {
-                        var isExpanded by remember { mutableStateOf(false) }
-                        var isFavorite by remember { mutableStateOf(false) }
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .border(
-                                    border = BorderStroke(
-                                        2.dp,
-                                        SolidColor(Color(red = 78, green = 0, blue = 0))
-                                    ),
-                                    shape = RoundedCornerShape(15.dp)
-                                )
-                                .width(300.dp)
-                                .padding(vertical = 8.dp)
-                                .animateContentSize(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(text = "Name: ")
-                            Text(text = "Heigth: ")
-                            Text(text = "Mass: ")
-                            Text(text = "Hair Color: ")
-                            Text(text = "Skin Color: ")
-                            AnimatedVisibility(visible = isExpanded) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .fillParentMaxWidth()
-                                        .animateContentSize(),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(text = "Eye Color: ")
-                                    Text(text = "Birth Year: ")
-                                    Text(text = "Gender: ")
-                                    Text(text = "Homeworld: ")
-                                    Text(text = "Species: ")
-                                }
-                            }
-
-                            Row(modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                                Button(onClick = { isExpanded = !isExpanded}) {
-                                    Text(text = if (isExpanded) "Ver menos" else "Ver mais")
-                                }
-
-                                IconButton(onClick = { isFavorite = !isFavorite }) {
-                                    Icon(imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder, contentDescription = "Favoritar")
-                                }
-                            }
-                        }
+                    items(lista.size) {
+                        ListItem(lista[it])
                     }
                 }
             }
