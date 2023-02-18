@@ -1,6 +1,11 @@
 package br.com.euvickson.maratastarwars.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class StarWarsPerson (
+    @PrimaryKey
     val name: String,
     val height: Int,
     val mass: Int,

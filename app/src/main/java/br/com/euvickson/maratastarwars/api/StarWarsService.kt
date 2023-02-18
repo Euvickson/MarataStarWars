@@ -1,10 +1,12 @@
 package br.com.euvickson.maratastarwars.api
 
 import br.com.euvickson.maratastarwars.api.model.StarWarsApiResult
-import retrofit2.Call
+import br.com.euvickson.maratastarwars.model.StarWarsPerson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 interface StarWarsService {
