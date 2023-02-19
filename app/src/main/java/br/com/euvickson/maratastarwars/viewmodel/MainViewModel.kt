@@ -25,4 +25,10 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
+    fun insertDataBase () {
+
+    }
+
+
 }
