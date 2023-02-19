@@ -15,8 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Observer
 import br.com.euvickson.maratastarwars.model.StarWarsPerson
-import br.com.euvickson.maratastarwars.room.AppDataBase
 import br.com.euvickson.maratastarwars.ui.elements.ListItem
 import br.com.euvickson.maratastarwars.ui.theme.MarataStarWarsTheme
 import br.com.euvickson.maratastarwars.viewmodel.MainViewModel
@@ -25,6 +25,10 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     val mainViewModel by viewModels<MainViewModel>()
+//    private val dao by lazy {
+//        val db = Room.databaseBuilder(this, AppDataBase::class.java, "starwars-db").build()
+//        return@lazy db.starWarsDAO()
+//    }
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,14 +40,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val db = AppDataBase.getInstance(this)
-                    val dao = db.starWarsDAO()
-                    val lista = mainViewModel.starWarsPersonListResponse
-                    mainViewModel.getPeopleList(dao)
                     val drawerState = rememberDrawerState(DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
-
-
+                    var lista: List<StarWarsPerson> = listOf()
+                    val observer = Observer<List<StarWarsPerson>> {list ->
+                        lista = list
+                    }
+                    mainViewModel.getStarWarsPeopleListData().observe(this, observer)
                     TelaPrincipal(drawerState, scope, lista)
                 }
             }
