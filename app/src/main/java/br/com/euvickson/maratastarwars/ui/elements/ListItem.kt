@@ -1,6 +1,5 @@
 package br.com.euvickson.maratastarwars.ui.elements
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -24,7 +23,7 @@ import br.com.euvickson.maratastarwars.model.StarWarsPerson
 @Composable
 fun ListItem(starWarsPerson: StarWarsPerson) {
     var isExpanded by remember { mutableStateOf(false) }
-    var isFavorite by remember { mutableStateOf(starWarsPerson.isFavorite) }
+    var isFavorite by remember { mutableStateOf(starWarsPerson.favorite) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -67,7 +66,7 @@ fun ListItem(starWarsPerson: StarWarsPerson) {
 
             IconButton(onClick = {
                 isFavorite = !isFavorite
-                starWarsPerson.isFavorite = isFavorite
+                starWarsPerson.favorite = isFavorite
             }) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,

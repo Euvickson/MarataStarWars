@@ -17,5 +17,5 @@ data class StarWarsPerson (
     val homeworld: String,
     val species: List<String>,
     val url: String,
-    var isFavorite: Boolean = false
+    var favorite: Boolean = false
         )

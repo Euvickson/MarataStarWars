@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.room.Room
 import br.com.euvickson.maratastarwars.model.StarWarsPerson
 import br.com.euvickson.maratastarwars.room.AppDataBase
 import br.com.euvickson.maratastarwars.ui.elements.ListItem
@@ -37,10 +36,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    val db = Room.databaseBuilder(this, AppDataBase::class.java, "starwars-db").build()
-//                    val dao = db.starWarsDAO()
+                    val db = AppDataBase.getInstance(this)
+                    val dao = db.starWarsDAO()
                     val lista = mainViewModel.starWarsPersonListResponse
-                    mainViewModel.getPeopleList()
+                    mainViewModel.getPeopleList(dao)
                     val drawerState = rememberDrawerState(DrawerValue.Closed)
                     val scope = rememberCoroutineScope()
 
