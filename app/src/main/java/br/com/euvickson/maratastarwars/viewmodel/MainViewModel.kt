@@ -1,27 +1,23 @@
 package br.com.euvickson.maratastarwars.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.euvickson.maratastarwars.Repository
 import br.com.euvickson.maratastarwars.api.StarWarsService
 import br.com.euvickson.maratastarwars.model.StarWarsPerson
-import br.com.euvickson.maratastarwars.room.StarWarsPersonDAO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    private var starWarsPersonListResponse = MutableLiveData<List<StarWarsPerson>>()
+    private val _state = MutableStateFlow(emptyList<StarWarsPerson>())
 
-    var errorMessage: String by mutableStateOf("")
+    val state:StateFlow<List<StarWarsPerson>>
+        get() = _state
+
     init {
-        starWarsPersonListResponse = Repository.getList()!!
-    }
-
-    fun getStarWarsPeopleListData(): LiveData<List<StarWarsPerson>> {
-        return starWarsPersonListResponse
+        viewModelScope.launch {
+            val personList = StarWarsService.getInstance().listFirstPage().results
+            _state.value = personList
+        }
     }
 }

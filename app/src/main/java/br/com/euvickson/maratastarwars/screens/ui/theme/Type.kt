@@ -1,4 +1,4 @@
-package br.com.euvickson.maratastarwars.activities.ui.theme
+package br.com.euvickson.maratastarwars.screens.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

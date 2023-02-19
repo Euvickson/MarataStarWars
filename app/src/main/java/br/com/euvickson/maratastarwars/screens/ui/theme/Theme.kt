@@ -1,4 +1,4 @@
-package br.com.euvickson.maratastarwars.activities.ui.theme
+package br.com.euvickson.maratastarwars.screens.ui.theme
 
 import android.app.Activity
 import android.os.Build
